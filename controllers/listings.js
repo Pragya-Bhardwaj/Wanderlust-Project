@@ -91,14 +91,14 @@ module.exports.filter = async (req, res, next) => {
     res.redirect("/listings");
   }
 };
-
+let input;
 module.exports.search = async (req, res) => {
   if (input == "" || input == " " || !input || input == undefined) {
     req.flash("error", "Please enter search query!");
     res.redirect("/listings");
   }
 
-  let input = req.query.q.trim().replace(/\s+/g, " ");
+   input = req.query.q.trim().replace(/\s+/g, " ");
   let data = input.split("");
   let element = "";
   let flag = false;
