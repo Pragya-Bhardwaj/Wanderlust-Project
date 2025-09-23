@@ -12,7 +12,6 @@ Technologies: HTML, CSS, JavaScript, Bootstrap, EJS, React.js
 
 Key Features:
 
-📱 Responsive Design – Optimized for all devices.
 
 🔍 User-Friendly UI – Simplified search and property listing.
 
@@ -64,9 +63,6 @@ Optimized delivery for fast-loading, high-quality property images.
 
 🍪 Cookies & Sessions – For seamless authentication and user notifications.
 
-🏗️ MVC Architecture – Organized and scalable project structure.
-
-💾 Multer – Handles image uploads.
 
 🚀 Deployment
 
@@ -104,6 +100,4 @@ EJS, ejs-mate (templating)
 
 Express-Session
 
-Joi (data validation)
 
-Multer (file uploads)
