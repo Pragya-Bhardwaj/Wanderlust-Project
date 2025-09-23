@@ -1,3 +1,4 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
@@ -46,7 +47,7 @@ const store = MongoStore.create({
   crypto: {
     secret: process.env.SECRET,
   },
-  touchAfter: 24 * 2600,
+  touchAfter: 24 * 3600,
 });
 
 store.on("error", () => {
