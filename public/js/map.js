@@ -21,31 +21,58 @@
 
 
 
-mapboxgl.accessToken = mapToken;
+// Make sure your mapbox-gl script and CSS are included in your layout BEFORE this file runs.
+// Example (in your layout or show.ejs):
+// <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+// <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
 
-// Ensure listing and coordinates exist
-if (listing && listing.geometry && Array.isArray(listing.geometry.coordinates) && listing.geometry.coordinates.length === 2) {
-    console.log("listing object:", listing);
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    // 1️⃣ Ensure token is available
+    if (!mapToken || mapToken === "undefined") {
+      console.error("❌ Mapbox token is missing");
+      return;
+    }
 
-    const map = new mapboxgl.Map({
+    mapboxgl.accessToken = mapToken;
+
+    // 2️⃣ Parse listing correctly (in EJS it may come as a string)
+    let parsedListing = typeof listing === "string" ? JSON.parse(listing) : listing;
+
+    // 3️⃣ Ensure valid coordinates
+    if (
+      parsedListing &&
+      parsedListing.geometry &&
+      Array.isArray(parsedListing.geometry.coordinates) &&
+      parsedListing.geometry.coordinates.length === 2
+    ) {
+      console.log("✅ Listing geometry:", parsedListing.geometry.coordinates);
+
+      const map = new mapboxgl.Map({
         container: "map",
-        style: 'mapbox://styles/mapbox/streets-v12', // ✅ "streets-v12" is stable
-        center: listing.geometry.coordinates,  // [lng, lat]
-        zoom: 8
-    });
+        style: "mapbox://styles/mapbox/streets-v12",
+        center: parsedListing.geometry.coordinates, // [lng, lat]
+        zoom: 9,
+      });
 
-    new mapboxgl.Marker({ color: 'red' })
-        .setLngLat(listing.geometry.coordinates)
+      // Add marker and popup
+      new mapboxgl.Marker({ color: "red" })
+        .setLngLat(parsedListing.geometry.coordinates)
         .setPopup(
-            new mapboxgl.Popup({ offset: 25 })
-                .setHTML(`<h4>${listing.title || "Location"}</h4><p>Exact location provided after booking</p>`)
+          new mapboxgl.Popup({ offset: 25 }).setHTML(
+            `<h4>${parsedListing.title || "Listing"}</h4><p>${parsedListing.location || ""}</p>`
+          )
         )
         .addTo(map)
         .togglePopup();
 
-    // ✅ Controls must be inside the same block
-    map.addControl(new mapboxgl.ScaleControl());
-    map.addControl(new mapboxgl.NavigationControl());
-} else {
-    console.error("Invalid or missing coordinates in listing.geometry");
-}
+      // Add navigation and scale controls
+      map.addControl(new mapboxgl.NavigationControl());
+      map.addControl(new mapboxgl.ScaleControl());
+    } else {
+      console.error("❌ Invalid or missing coordinates:", parsedListing.geometry);
+    }
+  } catch (err) {
+    console.error("❌ Mapbox initialization failed:", err);
+  }
+});
